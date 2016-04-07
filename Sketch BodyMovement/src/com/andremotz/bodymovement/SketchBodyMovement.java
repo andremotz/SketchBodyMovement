@@ -90,10 +90,10 @@ public class SketchBodyMovement extends PApplet {
 
 	void drawPicture() { // to draw a picture
 //		for (int j = 0; j < numberOfBodies; j++) {
+		for(Body currentBody : bodyList) {
 			//point(bodyPosition[0][j], bodyPosition[1][j]);
 			point(currentBody.getBodyPosition()[0], currentBody.getBodyPosition()[1]);
-			point(bodyInstance2.getBodyPosition()[0], bodyInstance2.getBodyPosition()[1]);
-//		}
+		}
 	}
 
 	/*
@@ -102,21 +102,66 @@ public class SketchBodyMovement extends PApplet {
 	void iteration() { 
 						
 //		for (int i = 0; i < numberOfBodies; i++) {
+		for(Body currentBody1 : bodyList) {
 			float[] speedChange = new float[2];
-			for (int j = 0; j < numberOfBodies; j++) {
-				if (i != j) {
-					speedChange = potential(i, j);
+//			for (int j = 0; j < numberOfBodies; j++) {
+			for(Body currentBody2 : bodyList) {
+				if (currentBody1 != currentBody2) {
+					speedChange = potential(currentBody1, currentBody2);
 				}
 			}
-			bodySpeed[0][i] = bodySpeed[0][i] + speedChange[0]
-					/ speedFactor;
-			bodySpeed[1][i] = bodySpeed[1][i] + speedChange[1]
-					/ speedFactor;
-			bodyPosition[0][i] = bodyPosition[0][i] + bodySpeed[0][i]
-					/ speedFactor;
-			bodyPosition[1][i] = bodyPosition[1][i] + bodySpeed[1][i]
-					/ speedFactor;
-//		}
+
+			// TODO Array-Durchlauf auf Mehrdimonsionalitaet vorbereiten
+			
+			// jeder body speed x = [0][i]
+//			bodySpeed[0][i] = bodySpeed[0][i] + speedChange[0]
+//					/ speedFactor;
+			float currentBodySpeedX = currentBody1.getBodySpeed()[0];
+			currentBodySpeedX = currentBodySpeedX + speedChange[0] / speedFactor;
+			
+			// jeder body speed y = [1][i]
+//			bodySpeed[1][i] = bodySpeed[1][i] + speedChange[1]
+//					/ speedFactor;
+			float currentBodySpeedY = currentBody1.getBodySpeed()[1];
+			currentBodySpeedY = currentBodySpeedY + speedChange[0] / speedFactor;
+			
+			currentBody1.setBodySpeed(new float[]{currentBodySpeedX, currentBodySpeedY});
+			
+			
+			// jeder body position x
+//			bodyPosition[0][i] = bodyPosition[0][i] + bodySpeed[0][i]
+//					/ speedFactor;
+			float currentBodyPositionX = currentBody1.getBodyPosition()[0];
+			currentBodyPositionX = currentBodyPositionX + currentBodySpeedX / speedFactor;
+			
+			// jeder body position y
+//			bodyPosition[1][i] = bodyPosition[1][i] + bodySpeed[1][i]
+//					/ speedFactor;
+			float currentBodyPositionY = currentBody1.getBodyPosition()[1];
+			currentBodyPositionY = currentBodyPositionY + currentBodySpeedY / speedFactor;
+			
+		}
+	}
+	
+	float[] potential(Body currentBody1, Body currentBody2) {
+		float[] speedChangeNew = new float[2];
+		float[] speedChange = new float[2];
+		
+		float currentBody1PositionX = currentBody1.getBodyPosition()[0];
+		float currentBody1PositionY = currentBody1.getBodyPosition()[1];
+		
+		float currentBody2PositionX = currentBody2.getBodyPosition()[0];
+		float currentBody2PositionY = currentBody2.getBodyPosition()[1];
+		
+		float distanceX = abs(currentBody1PositionX - currentBody2PositionX);
+		float distanceY = abs(currentBody1PositionY - currentBody2PositionY);
+		float distance = abs(pow(pow(distanceX, 2) + pow(distanceY, 2),
+				(float) 0.5));
+		
+		speedChange[0] = speedChange[0] + speedChangeNew[0];
+		speedChange[1] = speedChange[1] + speedChangeNew[1];
+
+		return speedChange;
 	}
 
 	/*
