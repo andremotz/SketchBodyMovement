@@ -1,16 +1,17 @@
 package com.andremotz.bodymovement;
 
 public class Body {
+
+	private float[] bodyPosition;
+	private float[] bodySpeed;
+	private float[] bodyAttribute;
 	
-	Body() {
+	public Body() {
 		bodyPosition = new float[2];
 		bodySpeed = new float[2];
 		bodyAttribute = new float[2];
 	}
 	
-	private float[] bodyPosition;
-	private float[] bodySpeed;
-	private float[] bodyAttribute;
 	
 	/**
 	 * @return the body_position

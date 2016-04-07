@@ -13,16 +13,9 @@ public class SketchBodyMovement extends PApplet {
 	public final int WIDTH = 1440;
 	public final int HEIGHT = 900;
 
-	int numberOfBodies = 2; // How many bodies are in the system
-	int numberOfSteps = 1000; // How many calculation steps should be
-								// calculated
-	int pictureCount = 20; // Defines every x. picture to save
-	float speedFactor = 1; // To controle the speed
-	float bodyPosition[][]; // ''' 0 .. X, 1 .. Y '''
-	float bodySpeed[][]; // ''' 0 .. Vx, 1 .. Vy '''
-	float bodyAttribute[][]; // ''' 0 .. Mass, 1 .. other '''
+	// To control the speed
+	float speedFactor = 1; 
 
-	// body_color = ["yo","b.","g."] //''' coloring '''
 	ArrayList<Body> bodyList;
 
 	public static void main(String[] args) {
@@ -40,58 +33,34 @@ public class SketchBodyMovement extends PApplet {
 		iteration();
 	}
 	
-	Body currentBody;
-	Body bodyInstance2;
-
 	void initializeBodies() {
-		bodyPosition = new float[3][3];
-		bodySpeed = new float[3][3];
-		bodyAttribute = new float[3][3];
-		
 		bodyList = new ArrayList<Body>();
+		Body currentBody = new Body();
 		
-		currentBody = new Body();
-		currentBody.setBodyPosition(new float[]{500,400});
+		// Body 1
+		currentBody.setBodyPosition(new float[]{500,500});
 		currentBody.setBodySpeed(new float[]{0,0});
 		currentBody.setBodyAttribute(new float[]{100,100});
 		bodyList.add(currentBody);
 		
+		// Body 2
 		currentBody = new Body();
 		currentBody.setBodyPosition(new float[]{450,400});
-		currentBody.setBodySpeed(new float[]{0,1});
+		currentBody.setBodySpeed(new float[]{5,1});
 		currentBody.setBodyAttribute(new float[]{1,1});
 		bodyList.add(currentBody);
-
-		// Body 1
-		bodyPosition[0][0] = 500;
-		bodyPosition[1][0] = 400;
-		bodySpeed[0][0] = 0;
-		bodySpeed[1][0] = 0;
-		bodyAttribute[0][0] = 100;
-		bodyAttribute[1][0] = 100;
-
-		// Body 2
-		bodyPosition[0][1] = 450;
-		bodyPosition[1][1] = 400;
-		bodySpeed[0][1] = 0;
-		bodySpeed[1][1] = 1;
-		bodyAttribute[0][1] = 1;
-		bodyAttribute[1][1] = 1;
-
+		
 		// Body 3
-//		body_position[0][2] = 550;
-//		body_position[1][2] = 450;
-//		body_speed[0][2] = (float) 0.5;
-//		body_speed[1][2] = 0;
-//		body_attribute[0][2] = 1;
-//		body_attribute[1][2] = 1;
-		// More bodies can be defined
+		currentBody = new Body();
+		currentBody.setBodyPosition(new float[]{750,450});
+		currentBody.setBodySpeed(new float[]{(float)-0.5,0});
+		currentBody.setBodyAttribute(new float[]{100,100});
+		bodyList.add(currentBody);
+
 	}
 
-	void drawPicture() { // to draw a picture
-//		for (int j = 0; j < numberOfBodies; j++) {
+	void drawPicture() {
 		for(Body currentBody : bodyList) {
-			//point(bodyPosition[0][j], bodyPosition[1][j]);
 			point(currentBody.getBodyPosition()[0], currentBody.getBodyPosition()[1]);
 		}
 	}
@@ -101,10 +70,8 @@ public class SketchBodyMovement extends PApplet {
 	 */
 	void iteration() { 
 						
-//		for (int i = 0; i < numberOfBodies; i++) {
 		for(Body currentBody1 : bodyList) {
 			float[] speedChange = new float[2];
-//			for (int j = 0; j < numberOfBodies; j++) {
 			for(Body currentBody2 : bodyList) {
 				if (currentBody1 != currentBody2) {
 					speedChange = potential(currentBody1, currentBody2);
@@ -113,36 +80,32 @@ public class SketchBodyMovement extends PApplet {
 
 			// TODO Array-Durchlauf auf Mehrdimonsionalitaet vorbereiten
 			
-			// jeder body speed x = [0][i]
-//			bodySpeed[0][i] = bodySpeed[0][i] + speedChange[0]
-//					/ speedFactor;
+			// bodySpeed1x = bodySpeed1x + speedchangeX / 
 			float currentBodySpeedX = currentBody1.getBodySpeed()[0];
 			currentBodySpeedX = currentBodySpeedX + speedChange[0] / speedFactor;
 			
 			// jeder body speed y = [1][i]
-//			bodySpeed[1][i] = bodySpeed[1][i] + speedChange[1]
-//					/ speedFactor;
 			float currentBodySpeedY = currentBody1.getBodySpeed()[1];
-			currentBodySpeedY = currentBodySpeedY + speedChange[0] / speedFactor;
+			currentBodySpeedY = currentBodySpeedY + speedChange[1] / speedFactor;
 			
 			currentBody1.setBodySpeed(new float[]{currentBodySpeedX, currentBodySpeedY});
 			
-			
 			// jeder body position x
-//			bodyPosition[0][i] = bodyPosition[0][i] + bodySpeed[0][i]
-//					/ speedFactor;
 			float currentBodyPositionX = currentBody1.getBodyPosition()[0];
 			currentBodyPositionX = currentBodyPositionX + currentBodySpeedX / speedFactor;
 			
 			// jeder body position y
-//			bodyPosition[1][i] = bodyPosition[1][i] + bodySpeed[1][i]
-//					/ speedFactor;
 			float currentBodyPositionY = currentBody1.getBodyPosition()[1];
 			currentBodyPositionY = currentBodyPositionY + currentBodySpeedY / speedFactor;
+			
+			currentBody1.setBodyPosition(new float[]{currentBodyPositionX, currentBodyPositionY});
 			
 		}
 	}
 	
+	/*
+	 * Here can be an arbitrary potential between the bodies be definded
+	 */
 	float[] potential(Body currentBody1, Body currentBody2) {
 		float[] speedChangeNew = new float[2];
 		float[] speedChange = new float[2];
@@ -158,39 +121,22 @@ public class SketchBodyMovement extends PApplet {
 		float distance = abs(pow(pow(distanceX, 2) + pow(distanceY, 2),
 				(float) 0.5));
 		
-		speedChange[0] = speedChange[0] + speedChangeNew[0];
-		speedChange[1] = speedChange[1] + speedChangeNew[1];
-
-		return speedChange;
-	}
-
-	/*
-	 * Here can be an arbitrary potential between the bodies be definded
-	 */
-	float[] potential(int i, int j) { 
-
-		float[] speedChangeNew = new float[2];
-		float[] speedChange = new float[2];
-
-		float distanceX = abs(bodyPosition[0][i] - bodyPosition[0][j]);
-		float distanceY = abs(bodyPosition[1][i] - bodyPosition[1][j]);
-		float distance = abs(pow(pow(distanceX, 2) + pow(distanceY, 2),
-				(float) 0.5));
-		speedChangeNew[0] = (float) (distanceX / (distance + 1)
-				* bodyAttribute[0][j] * 0.003);
-		speedChangeNew[1] = (float) (distanceY / (distance + 1)
-				* bodyAttribute[0][j] * 0.003);
-
-		if ((bodyPosition[0][i] - bodyPosition[0][j]) > 0) {
+		float bodyAttributeX = currentBody2.getBodyAttribute()[0];
+		speedChangeNew[0] = (float) ((distanceX /(distance +1)) * bodyAttributeX * 0.003);
+		
+		float bodyAttributeY = currentBody2.getBodyAttribute()[0];
+		speedChangeNew[1] = (float) ((distanceY /(distance +1)) * bodyAttributeY * 0.003);
+		
+		if (currentBody1PositionX - currentBody2PositionX > 0) {
 			speedChangeNew[0] = -speedChangeNew[0];
 		}
-		if ((bodyPosition[1][i] - bodyPosition[1][j]) > 0) {
+		if (currentBody1PositionY - currentBody2PositionY > 0) {
 			speedChangeNew[1] = -speedChangeNew[1];
 		}
 
 		speedChange[0] = speedChange[0] + speedChangeNew[0];
 		speedChange[1] = speedChange[1] + speedChangeNew[1];
-
+		
 		return speedChange;
 	}
 
